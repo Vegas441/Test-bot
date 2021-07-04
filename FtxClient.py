@@ -1,3 +1,5 @@
+from datetime import datetime
+from config import API_KEY, API_SECRET, SUBACCOUNT_NAME
 import time
 import urllib.parse
 from typing import Optional, Dict, Any, List
@@ -10,11 +12,11 @@ from ciso8601 import parse_datetime
 class FtxClient:
     _ENDPOINT = 'https://ftx.com/api/'
 
-    def __init__(self, api_key=None, api_secret=None, subaccount_name=None) -> None:
+    def __init__(self) -> None:
         self._session = Session()
-        self._api_key = api_key
-        self._api_secret = api_secret
-        self._subaccount_name = subaccount_name
+        self._api_key = API_KEY
+        self._api_secret = API_SECRET
+        self._subaccount_name = SUBACCOUNT_NAME
 
     def _get(self, path: str, params: Optional[Dict[str, Any]] = None) -> Any:
         return self._request('GET', path, params=params)
@@ -198,8 +200,10 @@ class FtxClient:
                 break
         return results
 
-
-# work in progress treba este vyzistit co a ako sa pouziva pagination pozri v api dokumentacii
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# zatial netreba pagination ak bude treba tak sa da jednoducho pridat len #
+# zmenis get_all_trades funkciu na prices nejakym sposobom                #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     def get_historical_prices(self, market: str, resolution: int, 
                               start_time: float = None, end_time: float = None) -> List[dict]:
@@ -207,3 +211,11 @@ class FtxClient:
                                                        'start_time': start_time,
                                                        'end_time': end_time 
                                                        })
+
+
+# test vytiahnutia dat - vsetko pojde prec ked sa ustaly spracovanie dat
+# prices = FtxClient().get_historical_prices('BTC/USD', 14400) # vytiahne poslednych 1500 4H candlestickov
+prices = FtxClient().get_historical_prices('BTC/USD', 14400, 
+            datetime.strptime('2020-3-20', '%Y-%m-%d').timestamp(), 
+            datetime.strptime('2020-3-21', '%Y-%m-%d').timestamp()) # vytiahne normlane 6 x 4H candlesticky v dany den
+print() # debug anchor
