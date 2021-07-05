@@ -63,6 +63,9 @@ class FtxClient:
     def list_markets(self) -> List[dict]:
         return self._get('markets')
 
+    def get_market(self, market: str) -> List[dict]:
+        return self._get(f'markets/{market}') 
+
     def get_orderbook(self, market: str, depth: int = None) -> dict:
         return self._get(f'markets/{market}/orderbook', {'depth': depth})
 
@@ -212,10 +215,13 @@ class FtxClient:
                                                        'end_time': end_time 
                                                        })
 
-
+'''
 # test vytiahnutia dat - vsetko pojde prec ked sa ustaly spracovanie dat
 # prices = FtxClient().get_historical_prices('BTC/USD', 14400) # vytiahne poslednych 1500 4H candlestickov
 prices = FtxClient().get_historical_prices('BTC/USD', 14400, 
             datetime.strptime('2020-3-20', '%Y-%m-%d').timestamp(), 
             datetime.strptime('2020-3-21', '%Y-%m-%d').timestamp()) # vytiahne normlane 6 x 4H candlesticky v dany den
-print() # debug anchor
+print() # debug anchor'''
+
+# test error
+# trades = FtxClient().get_trades('BBBB')
