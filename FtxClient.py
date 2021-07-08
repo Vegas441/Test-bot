@@ -203,25 +203,9 @@ class FtxClient:
                 break
         return results
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# zatial netreba pagination ak bude treba tak sa da jednoducho pridat len #
-# zmenis get_all_trades funkciu na prices nejakym sposobom                #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
     def get_historical_prices(self, market: str, resolution: int, 
                               start_time: float = None, end_time: float = None) -> List[dict]:
         return self._get(f'markets/{market}/candles', {'resolution': resolution,
                                                        'start_time': start_time,
                                                        'end_time': end_time 
                                                        })
-
-'''
-# test vytiahnutia dat - vsetko pojde prec ked sa ustaly spracovanie dat
-# prices = FtxClient().get_historical_prices('BTC/USD', 14400) # vytiahne poslednych 1500 4H candlestickov
-prices = FtxClient().get_historical_prices('BTC/USD', 14400, 
-            datetime.strptime('2020-3-20', '%Y-%m-%d').timestamp(), 
-            datetime.strptime('2020-3-21', '%Y-%m-%d').timestamp()) # vytiahne normlane 6 x 4H candlesticky v dany den
-print() # debug anchor'''
-
-# test error
-# trades = FtxClient().get_trades('BBBB')

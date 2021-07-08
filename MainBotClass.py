@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from Market import Market
 import pandas as pd
 from FtxClient import FtxClient
@@ -22,10 +23,31 @@ class MainBotClass:
             # Log error event (commandline print for now):
             print(e)
         else:
-            # should add initialization with historical prices so it can 
-            # be computed right away in Market constructor
-            self.watched_markets[market_name] = Market(market_name)
+            # gets me last hour of price action in 5M chart
+            start_time = (datetime.now() - timedelta(hours=1)).timestamp()
+            market_prices = \
+                pd.DataFrame(self.messenger.get_historical_prices(market=market_name, 
+                                                                  resolution=300, 
+                                                                  starTime=start_time
+                                                                  )) 
+            market_prices.drop(columns=['time', 'volume'], inplace=True)
+            market_positions = \
+                pd.DataFrame(self.messenger.get_position(name=market_name))
+            self.watched_markets[market_name] = Market(market_name, market_prices, market_positions)
 
-a = MainBotClass(['BTC/USD', 'BRAIN_FUCK', 'ETH/BTC']).watched_markets
+    def update_price_data(self) -> None:
+        for market in self.watched_markets.values():
+            start_time = datetime.strptime(market.price_data.tail(1).iloc[0,0], 
+                                           '%Y-%m-%dT%H:%M:%S+00:00'
+                                           ).timestamp() + timedelta(minutes=5)
+            market.append_price_data(self.messenger.get_historical_prices(market=market.name, 
+                                                                          resolution=300, 
+                                                                          startTime=start_time 
+                                                                          ))
+
+    
+
+a = MainBotClass(['BTC/USD']).update_price_data()
+#print(a['BTC/USD'].price_data)
 print()
 
