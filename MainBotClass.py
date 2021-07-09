@@ -1,3 +1,4 @@
+from Strategy import Strategy
 from datetime import datetime, timedelta
 from Market import Market
 import pandas as pd
@@ -12,6 +13,7 @@ class MainBotClass:
     def __init__(self, markets: List[str]) -> None:
         self.messenger = FtxClient()
         self.watched_markets = dict()
+        self.strategy = Strategy()
         for market_name in markets:
             self.add_market(market_name)
     
@@ -31,8 +33,10 @@ class MainBotClass:
                                                                   starTime=start_time
                                                                   )) 
             market_prices.drop(columns=['time', 'volume'], inplace=True)
-            market_positions = \
-                pd.DataFrame(self.messenger.get_position(name=market_name))
+            #market_positions = \
+             #   pd.DataFrame(self.messenger.get_position(name=market_name))
+            
+            market_positions = [Position(position) for position in self.messenger.get_position(name=market_name)]
             self.watched_markets[market_name] = Market(market_name, market_prices, market_positions)
 
     def update_price_data(self) -> None:
@@ -44,6 +48,9 @@ class MainBotClass:
                                                                           resolution=300, 
                                                                           startTime=start_time 
                                                                           ))
+
+    def apply_strategy(self) -> Dict[str, List[Position]]:
+        return self.strategy.evalaute_markets(self.watched_markets)
 
     
 

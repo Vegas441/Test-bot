@@ -1,10 +1,9 @@
+from typing import List
 import pandas as pd
 
 class Market:
     name: str = None
-    positions: pd.DataFrame = None
-    zones: pd.DataFrame = None
-    extremes: pd.DataFrame = None
+    positions: List[Position] = None
     price_data: pd.DataFrame = None
 
     # add second parameter with historical prices already 
@@ -14,8 +13,6 @@ class Market:
         self.name = name
         self.positions = positions
         self.price_data = price_data
-        self.zones = pd.DataFrame()
-        self.extremes = pd.DataFrame()
         
 
     def append_price_data(self, new_price_data: pd.DataFrame) -> None:
