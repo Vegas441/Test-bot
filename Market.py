@@ -4,8 +4,8 @@ import pandas as pd
 
 class Market:
     name: str = None
-    positions: List[Position] = None
-    price_data: pd.DataFrame = None
+    positions: List[Position] = []
+    price_data: pd.DataFrame = pd.DataFrame()
 
     # add second parameter with historical prices already 
     # fetched by main class when initializing it after this functions properly
@@ -18,9 +18,3 @@ class Market:
 
     def append_price_data(self, new_price_data: pd.DataFrame) -> None:
         self.price_data.append(new_price_data, ignore_index=True)
-
-    def find_extremes(self) -> None:
-        pass
-    
-    def find_zones(self) -> None:
-        pass

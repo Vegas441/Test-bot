@@ -153,7 +153,7 @@ class FtxClient:
                                                  'triggerPrice': trigger_price,
                                                  'size': size, 
                                                  'reduceOnly': reduce_only, 
-                                                 'type': 'stop',
+                                                 'type': type,
                                                  'cancelLimitOnTrigger': cancel, 
                                                  'orderPrice': limit_price
                                                  })
@@ -209,3 +209,4 @@ class FtxClient:
                                                        'start_time': start_time,
                                                        'end_time': end_time 
                                                        })
+
