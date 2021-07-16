@@ -8,7 +8,7 @@ class Strategy:
     extremes = []
 
     def __init__(self) -> None:
-        pass
+        return
 
     def evaluate_market(market: Market) -> Optional[Trade]:
         ''' 

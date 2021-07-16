@@ -1,4 +1,5 @@
 from pandas.core.accessor import register_dataframe_accessor
+from pandas.io.formats import style
 from Position import Order, Position
 from Strategy import Strategy
 from datetime import datetime, timedelta
@@ -6,6 +7,7 @@ from Market import Market
 import pandas as pd
 from FtxClient import FtxClient
 from typing import Any, Dict, Optional, Tuple, List
+import mplfinance as mpf
 
 Stop_loss = Optional[Order]
 Take_profit = Optional[Order]
@@ -29,14 +31,14 @@ class MainBotClass:
             print(e)
         else:
             # gets me last hour of price action in 5M chart
-            start_time = (datetime.now() - timedelta(hours=1)).timestamp()
+            start_time = (datetime.now() - timedelta(hours=10)).timestamp()
             market_prices = \
                 pd.DataFrame(self.messenger.get_historical_prices(market=market_name, 
                                                                   resolution=300, 
                                                                   start_time=start_time
                                                                   )) 
             market_prices.drop(columns=['time', 'volume'], inplace=True)
-            market_position = self.get_market_postion(market_name)
+            market_position = self.get_market_position(market_name)
             self.watched_markets[market_name] = Market(market_name, market_prices, market_position)
 
     def get_market_position(self, market_name: str) -> Position:
@@ -52,7 +54,7 @@ class MainBotClass:
             return None
             
 
-    def recog_orders(self, market_name:str, orders: List[dict]) -> Tuple[Stop_loss, List[Take_profit]]:
+    def recog_orders(self, market_name: str, orders: List[dict]) -> Tuple[Stop_loss, List[Take_profit]]:
         '''
         Sorts existing orders in order: Stop_loss, List[Take_profit]
         Works only for Strategy that uses 1 position (therefore many TP and exactly 1 SL order )
@@ -86,10 +88,19 @@ class MainBotClass:
                 new_trades[market.name] = possible_trade
         return new_trades
 
+    def plot_market_data(self, market: Market) -> None:
+        data_to_plot = market.price_data.copy(deep=True)
+        data_to_plot['startTime'] = \
+            pd.to_datetime(data_to_plot['startTime'].apply(lambda date: datetime.strptime(date, '%Y-%m-%dT%H:%M:%S+00:00')))
+        data_to_plot.set_index('startTime', inplace=True)
+        mpf.plot(data_to_plot, type='candle', style='charles') # vie tiez savevovat obrazky plotu
+        
+
 
     
 
-a = MainBotClass(['BTC/USD']).watched_markets#.update_price_data()
-print(a['BTC/USD'].price_data)
+a = MainBotClass(['BTC/USD'])
+arg = a.watched_markets['BTC/USD']
+a.plot_market_data(arg)
 print()
 
