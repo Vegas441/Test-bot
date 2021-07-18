@@ -1,5 +1,5 @@
 from datetime import datetime
-from config import API_KEY, API_SECRET, SUBACCOUNT_NAME
+from api_and_main_class_config import API_KEY, API_SECRET, SUBACCOUNT_NAME
 import time
 import urllib.parse
 from typing import Optional, Dict, Any, List

@@ -19,9 +19,9 @@ class MainBotClass:
     def __init__(self, markets: List[str]) -> None:
         self.messenger = FtxClient()
         self.watched_markets = dict()
-        self.strategy = Strategy()
         for market_name in markets:
             self.add_market(market_name)
+        self.strategy = Strategy(self.watched_markets)
 
     def add_market(self, market_name: str) -> None:
         try:
@@ -30,7 +30,7 @@ class MainBotClass:
             # Log error event (commandline print for now):
             print(e)
         else:
-            # gets me last hour of price action in 5M chart
+            # gets me last 10 hours of price action in 5M chart
             start_time = (datetime.now() - timedelta(hours=10)).timestamp()
             market_prices = \
                 pd.DataFrame(self.messenger.get_historical_prices(market=market_name, 
@@ -45,7 +45,7 @@ class MainBotClass:
         sl_order, tp_orders = self.recog_orders(market_name, self.messenger.get_conditional_orders(market_name))
         position = self.messenger.get_position(name=market_name)
         if sl_order and tp_orders and position:
-            return Position(position, sl_order, tp_orders)
+            return Position(position, sl_order, tp_orders, is_triggered=True)
         elif not position:
             return None
         else:

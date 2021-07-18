@@ -8,7 +8,8 @@ class Order:
 
 class Position:
 
-    def __init__(self, api_position: dict, stop_loss: Order, take_profits: List[Order] ) -> None:
+    def __init__(self, api_position: dict, stop_loss: Order, take_profits: List[Order], is_triggered: bool) -> None:
+        self.is_triggered = is_triggered
         self.stop_loss = stop_loss
         self.take_profit = take_profits # there can be more than 1 TP
         self.specs = api_position
