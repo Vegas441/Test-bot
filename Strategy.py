@@ -50,14 +50,17 @@ class Strategy:
              #       last candle and if price is close enough to EMA
 
     def analyze_price_action(self, market: Market, start_time: str = None) -> None:
-        # este bude treba pocas nacitania v main classe zmenit startTimes na datetime objekty
-        relevant_candles = market.price_data if start_time is None else \
-            market.price_data.loc[market.price_data['startTime'] > start_time]
         last_EMA = market.price_data['close'].loc[0:21].sum(axis=0) / EMA_INTERVAL if start_time is None else \
-            self.markets_EMAs[market.name].tail(1).iloc[0,1]
+            self.markets_EMAs[market.name].tail(1).iloc[0,0]
+
+        # este bude treba pocas nacitania v main classe zmenit startTimes na datetime objekty
+        relevant_candles = market.price_data.loc[21:] if start_time is None else \
+            market.price_data.loc[market.price_data['startTime'] > start_time]
+
         if start_time is None:
-            self.markets_EMAs[market.name].append(pd.DataFrame([market.price_data.iloc[20,0], last_EMA], columns=['date', 'EMA']))
-        for _, row in market.price_data['close', 'startTime'].loc[21:]:
+            self.markets_EMAs[market.name].append(pd.DataFrame([relevant_candles.iloc[20,0], last_EMA], columns=['date', 'EMA']))
+
+        for _, row in relevant_candles['close', 'startTime']:
             last_EMA = (2 / (EMA_INTERVAL + 1)) * (row[0] - last_EMA) + last_EMA
             self.markets_EMAs[market.name].append(pd.DataFrame([row[1], last_EMA], columns=['date', 'EMA']))
 
