@@ -20,6 +20,7 @@ class Trend(Enum):
     CONSOLIDATION = 2
 
 class Strategy:
+    
     market_datapoints = dict()
     market_last_check = dict()
 
