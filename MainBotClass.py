@@ -11,6 +11,7 @@ import mplfinance as mpf
 
 Stop_loss = Optional[Order]
 Take_profit = Optional[Order]
+Trade = Tuple[Order, Position]
 
 class MainBotClass:
     messenger: FtxClient = None
@@ -80,7 +81,7 @@ class MainBotClass:
                                                                           start_time=start_time 
                                                                           ))
 
-    def apply_strategy(self) -> Dict[str, List[Position]]:
+    def apply_strategy(self) -> Dict[str, List[Trade]]:
         new_trades = dict()
         for market in self.watched_markets.values():
             possible_trade = self.strategy.evaluate_market(market)
