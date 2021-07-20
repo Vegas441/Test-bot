@@ -58,19 +58,24 @@ class Strategy:
         relevant_candles = market.price_data.loc[20:] if start_time is None else \
             market.price_data.loc[market.price_data['startTime'] > start_time]
 
+        market_EMAs = {
+            'startTime': [],
+            'EMA': []
+        }
+
         if start_time is None:
-            self.markets_EMAs[market.name] = pd.DataFrame([[relevant_candles.loc[20,"startTime"], last_EMA]], columns=['date', 'EMA'])
+            market_EMAs['startTime'].append(relevant_candles.loc[20,"startTime"])
+            market_EMAs['EMA'].append(last_EMA)
 
         for _, row in relevant_candles.iterrows():
             close = row['close']
-            startTime = row['startTime']
+            time = row['startTime']
             last_EMA = (2 / (EMA_INTERVAL + 1)) * (close - last_EMA) + last_EMA
-            print(self.markets_EMAs['BTC/USD'])
-            self.markets_EMAs[market.name].append(pd.DataFrame([[startTime, last_EMA]], columns=['date', 'EMA']))
-            print(self.markets_EMAs['BTC/USD'])
-            print('\n-----------------------\n')
+            market_EMAs['startTime'].append(time)
+            market_EMAs['EMA'].append(last_EMA)
         
-        print(self.markets_EMAs['BTC/USD'])
+        self.markets_EMAs[market.name] = pd.DataFrame(market_EMAs)
+        self.market_last_check[market.name] = market_EMAs['startTime'][-1]
 
     def update_analysis(self, market: Market) -> None:
         last_historical_price = market.price_data.tail(1).iloc[0,0]
