@@ -51,7 +51,7 @@ class Strategy:
              #       last candle and if price is close enough to EMA
 
     def analyze_price_action(self, market: Market, start_time: str = None) -> None:
-        last_EMA = market.price_data['close'].loc[0:21].sum(axis=0) / EMA_INTERVAL if start_time is None else \
+        last_EMA = market.price_data['close'].loc[0:20].sum(axis=0) / EMA_INTERVAL if start_time is None else \
             self.markets_EMAs[market.name].tail(1).iloc[0,0]
 
         # este bude treba pocas nacitania v main classe zmenit startTimes na datetime objekty
@@ -63,9 +63,6 @@ class Strategy:
             'EMA': []
         }
 
-        if start_time is None:
-            market_EMAs['startTime'].append(relevant_candles.loc[20,"startTime"])
-            market_EMAs['EMA'].append(last_EMA)
 
         for _, row in relevant_candles.iterrows():
             close = row['close']

@@ -1,4 +1,5 @@
 #%%
+from strategy_config import EMA_INTERVAL
 from pandas.core.accessor import register_dataframe_accessor
 from pandas.io.formats import style
 from Position import Order, Position
@@ -33,7 +34,7 @@ class MainBotClass:
             print(e)
         else:
             # gets me last 10 hours of price action in 5M chart
-            start_time = (datetime.now() - timedelta(hours=10)).timestamp()
+            start_time = (datetime.now() - timedelta(hours=24)).timestamp()
             market_prices = \
                 pd.DataFrame(self.messenger.get_historical_prices(market=market_name, 
                                                                   resolution=300, 
@@ -91,11 +92,12 @@ class MainBotClass:
         return new_trades
 
     def plot_market_data(self, market: Market) -> None:
-        data_to_plot = market.price_data.copy(deep=True)
+        data_to_plot = market.price_data.loc[EMA_INTERVAL - 1:].copy(deep=True)
         data_to_plot['startTime'] = \
             pd.to_datetime(data_to_plot['startTime'].apply(lambda date: datetime.strptime(date, '%Y-%m-%dT%H:%M:%S+00:00')))
         data_to_plot.set_index('startTime', inplace=True)
-        mpf.plot(data_to_plot, type='candle', style='charles') # vie tiez savevovat obrazky plotu
+        ema21 = mpf.make_addplot(self.strategy.markets_EMAs[market.name]['EMA'])
+        mpf.plot(data_to_plot, type='candle', style='charles', addplot=ema21) # vie tiez savevovat obrazky plotu
         
 a = MainBotClass(['BTC/USD'])
 arg = a.watched_markets['BTC/USD']
