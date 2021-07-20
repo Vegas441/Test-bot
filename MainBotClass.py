@@ -1,3 +1,4 @@
+#%%
 from pandas.core.accessor import register_dataframe_accessor
 from pandas.io.formats import style
 from Position import Order, Position
@@ -96,9 +97,8 @@ class MainBotClass:
         data_to_plot.set_index('startTime', inplace=True)
         mpf.plot(data_to_plot, type='candle', style='charles') # vie tiez savevovat obrazky plotu
         
-
 a = MainBotClass(['BTC/USD'])
 arg = a.watched_markets['BTC/USD']
 a.plot_market_data(arg)
 print()
-
+# %%
