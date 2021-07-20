@@ -98,8 +98,6 @@ class MainBotClass:
         
 
 
-    
-
 a = MainBotClass(['BTC/USD'])
 arg = a.watched_markets['BTC/USD']
 a.plot_market_data(arg)

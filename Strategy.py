@@ -28,7 +28,8 @@ class Strategy:
 
     def __init__(self,watched_markets: Dict[str, Market]) -> None:
         for market in watched_markets.values():
-            self.markets_EMAs[market.name] = dict()
+            # EMA = 
+            self.markets_EMAs[market.name] = pd.DataFrame()
             self.analyze_price_action(market)
 
     def evaluate_market(self, market: Market) -> Optional[Trade]:
@@ -58,7 +59,7 @@ class Strategy:
             market.price_data.loc[market.price_data['startTime'] > start_time]
 
         if start_time is None:
-            self.markets_EMAs[market.name].append(pd.DataFrame([relevant_candles.iloc[20,0], last_EMA], columns=['date', 'EMA']))
+            self.markets_EMAs[market.name] = pd.DataFrame([relevant_candles.iloc[20,0], last_EMA], columns=['date', 'EMA'])
 
         for _, row in relevant_candles['close', 'startTime']:
             last_EMA = (2 / (EMA_INTERVAL + 1)) * (row[0] - last_EMA) + last_EMA
