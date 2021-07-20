@@ -29,7 +29,7 @@ class Strategy:
     def __init__(self,watched_markets: Dict[str, Market]) -> None:
         for market in watched_markets.values():
             # EMA = 
-            self.markets_EMAs[market.name] = pd.DataFrame()
+            self.markets_EMAs[market.name] = dict()
             self.analyze_price_action(market)
 
     def evaluate_market(self, market: Market) -> Optional[Trade]:
@@ -55,15 +55,19 @@ class Strategy:
             self.markets_EMAs[market.name].tail(1).iloc[0,0]
 
         # este bude treba pocas nacitania v main classe zmenit startTimes na datetime objekty
-        relevant_candles = market.price_data.loc[21:] if start_time is None else \
+        relevant_candles = market.price_data.loc[20:] if start_time is None else \
             market.price_data.loc[market.price_data['startTime'] > start_time]
 
         if start_time is None:
-            self.markets_EMAs[market.name] = pd.DataFrame([relevant_candles.iloc[20,0], last_EMA], columns=['date', 'EMA'])
+            print(relevant_candles)
+            self.markets_EMAs[market.name] = pd.DataFrame([relevant_candles.loc[20,"startTime"], last_EMA], columns=['date', 'EMA'])
+            print(self.markets_EMAs)
 
         for _, row in relevant_candles['close', 'startTime']:
-            last_EMA = (2 / (EMA_INTERVAL + 1)) * (row[0] - last_EMA) + last_EMA
-            self.markets_EMAs[market.name].append(pd.DataFrame([row[1], last_EMA], columns=['date', 'EMA']))
+            close = row[0]
+            startTime = row[1]
+            last_EMA = (2 / (EMA_INTERVAL + 1)) * (close - last_EMA) + last_EMA
+            self.markets_EMAs[market.name].append(pd.DataFrame([startTime, last_EMA], columns=['date', 'EMA']))
 
     def update_analysis(self, market: Market) -> None:
         last_historical_price = market.price_data.tail(1).iloc[0,0]
