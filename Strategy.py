@@ -28,8 +28,6 @@ class Strategy:
 
     def __init__(self,watched_markets: Dict[str, Market]) -> None:
         for market in watched_markets.values():
-            # EMA = 
-            self.markets_EMAs[market.name] = dict()
             self.analyze_price_action(market)
 
     def evaluate_market(self, market: Market) -> Optional[Trade]:
@@ -42,7 +40,7 @@ class Strategy:
         if not market.has_active_position():
             return self.check_for_position()
         pass # TODO: switching positions if EMA cross occured
-             #       | setting market SL and TP (dont know about the TP with this strategy)
+             #       | setting market SL and TP (dont know about the TP with this strategy for now)
              #       | setting market order for position trigger
              #       | creating position specification
         

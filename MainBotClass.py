@@ -33,7 +33,7 @@ class MainBotClass:
             # Log error event (commandline print for now):
             print(e)
         else:
-            # gets me last 10 hours of price action in 5M chart
+            # gets me last 24 hours of price action in 5M chart
             start_time = (datetime.now() - timedelta(hours=24)).timestamp()
             market_prices = \
                 pd.DataFrame(self.messenger.get_historical_prices(market=market_name, 
