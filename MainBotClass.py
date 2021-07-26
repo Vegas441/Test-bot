@@ -99,8 +99,9 @@ class MainBotClass:
         ema21 = mpf.make_addplot(self.strategy.markets_EMAs[market.name]['EMA'])
         mpf.plot(data_to_plot, type='candle', style='charles', addplot=ema21) # vie tiez savevovat obrazky plotu
         
-a = MainBotClass(['BTC/USD'])
-arg = a.watched_markets['BTC/USD']
-a.plot_market_data(arg)
-print()
+if __name__ == "__main__":
+    a = MainBotClass(['BTC/USD'])
+    arg = a.watched_markets['BTC/USD']
+    a.plot_market_data(arg)
+    print()
 # %%
